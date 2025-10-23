@@ -2,7 +2,7 @@
 A Hollow Knight: Silksong mod for supporting language switching in the game.
 
 ## Source
-GitHub: [https://github.com/DemoJameson/Silksong.ReturnToBench](https://github.com/DemoJameson/Silksong.ReturnToBench)
+GitHub: [https://github.com/DemoJameson/Silksong.SwitchLanguageInGame](https://github.com/DemoJameson/Silksong.SwitchLanguageInGame)
 
 ## To install
 

@@ -49,6 +49,9 @@
         <None Include="README.md" Pack="True" PackagePath="README.md"/>
         <None Include="thunderstore/icon.png" Pack="True" PackagePath="icon.png"/>
     </ItemGroup>
+    <ItemGroup>
+      <Compile Remove="Plugin.cs" />
+    </ItemGroup>
     <Target Name="CopyAndPackageMod" AfterTargets="PostBuildEvent">
         <ItemGroup>
             <Binaries Include="$(TargetPath)"/>

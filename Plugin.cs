@@ -4,6 +4,9 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
+using TeamCherry.Localization;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Silksong.SwitchLanguageInGame;
@@ -13,13 +16,20 @@ namespace Silksong.SwitchLanguageInGame;
 public partial class Plugin : BaseUnityPlugin {
     private static ManualLogSource logger = null!;
     private static ConfigEntry<bool> enableSwitching = null!;
+
     private Harmony? harmony;
-    
+
     private void Awake() {
         logger = Logger;
         enableSwitching = Config.Bind("General", "Switch Language in Game", true, new ConfigDescription("Support language switching in the game"));
         enableSwitching.SettingChanged += OnEnableSwitchingOnSettingChanged;
         harmony = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
+    }
+
+    private void Start() {
+        var original = AccessTools.Method(typeof(Language), nameof(Language.SwitchLanguage), [typeof(LanguageCode)]);
+        var postfix = new HarmonyMethod(typeof(Plugin), nameof(LanguageSwitchPostfix));
+        harmony?.Patch(original, postfix: postfix);
     }
 
     private void OnDestroy() {
@@ -52,6 +62,17 @@ public partial class Plugin : BaseUnityPlugin {
             }
 
             value = true;
+        }
+    }
+
+    private static void LanguageSwitchPostfix() {
+        if (SceneManager.GetActiveScene().name == "Menu_Title") {
+            return;
+        }
+
+        var texts = Resources.FindObjectsOfTypeAll<SetTextMeshProGameText>();
+        foreach (var text in texts) {
+            text.UpdateText();
         }
     }
 }

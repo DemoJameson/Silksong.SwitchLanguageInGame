@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.2
+* fix: Interact text does not change in real time
+
 ## 1.2.1
 fix: Switching to a certain language results in an error
 

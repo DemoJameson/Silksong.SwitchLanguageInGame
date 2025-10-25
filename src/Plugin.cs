@@ -27,6 +27,8 @@ public partial class Plugin : BaseUnityPlugin {
         }
 
         gameObject.AddComponent<SwitchComponent>();
+        gameObject.AddComponent<DialogueBoxComponent>();
+        gameObject.AddComponent<PromptMarkerComponent>();
 
 #if DEBUG
         gameObject.AddComponent<DebugComponent>();
@@ -64,16 +66,15 @@ public partial class Plugin : BaseUnityPlugin {
 
     private static void LanguageDoSwitchPostfix() {
         PluginConfig.SelectedLanguage.Value = Language._currentLanguage;
-
-        DialogueBoxUpdater.AddReversedEntrySheets();
+        LanguageUtils.AddReversedEntrySheets();
 
         if (SceneManager.GetActiveScene().name == "Menu_Title") {
             return;
         }
 
         UpdateSetting();
-        UpdateLanguageCpomponents();
-        DialogueBoxUpdater.UpdateText();
+        UpdateComponents();
+        OnLanguageSwitched?.Invoke(Language._currentLanguage);
     }
 
     private static void UpdateSetting() {
@@ -85,9 +86,8 @@ public partial class Plugin : BaseUnityPlugin {
         }
     }
 
-    private static void UpdateLanguageCpomponents() {
+    private static void UpdateComponents() {
         UpdateComponents<SetTextMeshProGameText>(component => component.UpdateText());
-        UpdateComponents<ChangePositionByLanguage>(component => component.DoOffset());
         UpdateComponents<ActivatePerLanguage>(component => component.UpdateLanguage());
         UpdateComponents<ChangeByLanguageBase>(component => component.DoUpdate());
         UpdateComponents<ChangeFontByLanguage>(component => {
@@ -97,7 +97,7 @@ public partial class Plugin : BaseUnityPlugin {
         });
     }
 
-    private static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {
+    public static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {
         var components = Resources.FindObjectsOfTypeAll<T>();
         if (components == null) {
             return;
@@ -107,4 +107,6 @@ public partial class Plugin : BaseUnityPlugin {
             action(component);
         }
     }
+    
+    public static event Action<LanguageCode>? OnLanguageSwitched;
 }

@@ -90,6 +90,11 @@ public partial class Plugin : BaseUnityPlugin {
         UpdateComponents<SetTextMeshProGameText>(component => component.UpdateText());
         UpdateComponents<ActivatePerLanguage>(component => component.UpdateLanguage());
         UpdateComponents<ChangeByLanguageBase>(component => component.DoUpdate());
+        UpdateComponents<InventoryItemManager>(component => {
+            if (component.CurrentSelected) {
+                component.SetDisplay(component.CurrentSelected);
+            }
+        });
         UpdateComponents<ChangeFontByLanguage>(component => {
             if (component.defaultMaterial) {
                 component.SetFont();

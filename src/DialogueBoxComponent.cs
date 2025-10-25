@@ -20,10 +20,10 @@ public class DialogueBoxComponent : MonoBehaviour {
     private void Awake() {
         Plugin.OnLanguageSwitched += _ => UpdateText();
     }
-    
+
     private static void UpdateText() {
         UpdateAreaTitle();
-        
+
         var dialogueBox = DialogueBox._instance;
         if (!dialogueBox || !dialogueBox.isDialogueRunning) {
             return;
@@ -33,7 +33,8 @@ public class DialogueBoxComponent : MonoBehaviour {
             return;
         }
 
-        DialogueBox.StartConversation(savedText.Value.ToString(false),  dialogueBox.instigator, savedOverrideContinue, savedDisplayOptions, savedOnDialogueEnd, savedOnDialogueCancelled);
+        DialogueBox.StartConversation(savedText.Value.ToString(false), dialogueBox.instigator, savedOverrideContinue, savedDisplayOptions, savedOnDialogueEnd,
+            savedOnDialogueCancelled);
     }
 
     private static void UpdateAreaTitle() {
@@ -54,7 +55,8 @@ public class DialogueBoxComponent : MonoBehaviour {
     [HarmonyPatch(typeof(DialogueBox), nameof(DialogueBox.StartConversation),
         typeof(string), typeof(NPCControlBase), typeof(bool), typeof(DialogueBox.DisplayOptions), typeof(Action), typeof(Action))]
     [HarmonyPrefix]
-    private static void DialogueBoxStartConversation(string text, NPCControlBase instigator, bool overrideContinue, DialogueBox.DisplayOptions displayOptions, Action onDialogueEnd, Action onDialogueCancelled) {
+    private static void DialogueBoxStartConversation(string text, NPCControlBase instigator, bool overrideContinue, DialogueBox.DisplayOptions displayOptions, Action onDialogueEnd,
+        Action onDialogueCancelled) {
         var dialogueBox = DialogueBox._instance;
         if (!dialogueBox) {
             return;
@@ -69,8 +71,7 @@ public class DialogueBoxComponent : MonoBehaviour {
             savedOnDialogueCancelled = onDialogueCancelled;
         }
     }
-    
-    
+
     [HarmonyPatch(typeof(DialogueBox), nameof(DialogueBox.CloseAndEnd))]
     [HarmonyPostfix]
     private static IEnumerator DialogueBoxCloseAndEnd(IEnumerator __result) {
@@ -82,5 +83,4 @@ public class DialogueBoxComponent : MonoBehaviour {
         savedOnDialogueEnd = null;
         savedOnDialogueCancelled = null;
     }
-    
 }

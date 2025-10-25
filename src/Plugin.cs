@@ -79,52 +79,52 @@ public partial class Plugin : BaseUnityPlugin {
         OnLanguageSwitched?.Invoke(Language._currentLanguage);
     }
 
-    // TODO 地图“隐藏图钉”文本没有更新
     private static void UpdatePanel() {
         var gameManager = GameManager._instance;
         if (!gameManager) return;
 
         var mapManager = gameManager.gameMap.mapManager;
         mapManager.paneList.currentPaneText.text = mapManager.pane.DisplayName;
+        mapManager.UpdateKeyPromptState(false);
     }
 
     private static void UpdateSetting() {
         var gameManager = GameManager._instance;
-        if (gameManager) {
-            gameManager.gameSettings.gameLanguage = (SupportedLanguages)Language._currentLanguage;
-            gameManager.RefreshLocalization();
-            UIManager.instance.languageSetting.UpdateText();
-        }
+        if (!gameManager) return;
+
+        gameManager.gameSettings.gameLanguage = (SupportedLanguages)Language._currentLanguage;
+        gameManager.RefreshLocalization();
+        UIManager.instance.languageSetting.UpdateText();
     }
 
     private static void UpdateQuest() {
         UpdateComponents<QuestItemBoard>(component => {
-            if (component.itemList) {
-                try {
-                    var inventoryItemQuests = component.GetSelectables(null);
-                    var basicQuestBases = component.GetItems();
-                    if (inventoryItemQuests != null && basicQuestBases != null) {
-                        for (var i = 0; i < inventoryItemQuests.Count; i++) {
-                            var item = inventoryItemQuests[i];
-                            var quest = basicQuestBases[i];
-                            if (quest.QuestType) {
-                                if (item.icon) {
-                                    item.icon.sprite = quest.QuestType.Icon;
-                                }
+            if (!component.itemList) return;
 
-                                if (item.typeText) {
-                                    item.typeText.text = quest.QuestType.DisplayName;
-                                }
-                            }
+            try {
+                var inventoryItemQuests = component.GetSelectables(null);
+                var basicQuestBases = component.GetItems();
+                if (inventoryItemQuests == null || basicQuestBases == null) return;
 
-                            if (item.nameText) {
-                                item.nameText.text = quest.DisplayName;
-                            }
+                for (var i = 0; i < inventoryItemQuests.Count; i++) {
+                    var item = inventoryItemQuests[i];
+                    var quest = basicQuestBases[i];
+                    if (quest.QuestType) {
+                        if (item.icon) {
+                            item.icon.sprite = quest.QuestType.Icon;
+                        }
+
+                        if (item.typeText) {
+                            item.typeText.text = quest.QuestType.DisplayName;
                         }
                     }
-                } catch (Exception) {
-                    // ignored
+
+                    if (item.nameText) {
+                        item.nameText.text = quest.DisplayName;
+                    }
                 }
+            } catch {
+                // ignored
             }
         });
     }
@@ -147,9 +147,7 @@ public partial class Plugin : BaseUnityPlugin {
 
     public static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {
         var components = Resources.FindObjectsOfTypeAll<T>();
-        if (components == null) {
-            return;
-        }
+        if (components == null) return;
 
         foreach (var component in components) {
             action(component);

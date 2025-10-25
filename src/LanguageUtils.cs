@@ -44,6 +44,7 @@ public static class LanguageUtils {
             foreach (var pair in sheetValue) {
                 reverseValue[pair.Value] = pair.Key;
             }
+
             entrySheets.Add(entrySheet.Key, reverseValue);
         }
     }

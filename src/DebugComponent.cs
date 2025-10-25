@@ -16,7 +16,7 @@ public class DebugComponent : MonoBehaviour {
         original = AccessTools.PropertySetter(typeof(TMP_Text), nameof(TMP_Text.text));
         postfix = new HarmonyMethod(typeof(DebugComponent), nameof(TMP_TextSetText));
         Plugin.HarmonyInstance?.Patch(original, postfix: postfix);
-        
+
         original = AccessTools.Method(typeof(LocalisedString), nameof(LocalisedString.ToString), [typeof(bool)]);
         postfix = new HarmonyMethod(typeof(DebugComponent), nameof(LocalisedStringToString));
         Plugin.HarmonyInstance?.Patch(original, postfix: postfix);
@@ -31,7 +31,7 @@ public class DebugComponent : MonoBehaviour {
         Plugin.Log.LogWarning($"TMP_Text.set_text({value})");
         Plugin.Log.LogInfo(new StackTrace());
     }
-    
+
     private static void LocalisedStringToString(bool allowBlankText, string __result) {
         // Plugin.Log.LogWarning($"LocalisedString.ToString({allowBlankText}) = {__result}");
         // Plugin.Log.LogInfo(new StackTrace());

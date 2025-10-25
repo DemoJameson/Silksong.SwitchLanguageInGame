@@ -22,7 +22,7 @@ public partial class Plugin : BaseUnityPlugin {
         try {
             HarmonyInstance = Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
         } catch (Exception e) {
-            Logger.LogError(e.Message);
+            Logger.LogError(e);
         }
 
         gameObject.AddComponent<SwitchComponent>();
@@ -36,9 +36,9 @@ public partial class Plugin : BaseUnityPlugin {
         PluginConfig.Bind(this);
 
         var original = AccessTools.Method(typeof(Language), nameof(Language.SwitchLanguage), [typeof(LanguageCode)]);
-        var postfix = new HarmonyMethod(typeof(Plugin), nameof(LanguageSwitchPostfix));
+        var postfix = new HarmonyMethod(typeof(Plugin), nameof(LanguageDoSwitchPostfix));
         HarmonyInstance?.Patch(original, postfix: postfix);
-        LanguageSwitchPostfix();
+        LanguageDoSwitchPostfix();
     }
 
     private void OnDestroy() {
@@ -61,7 +61,9 @@ public partial class Plugin : BaseUnityPlugin {
         }
     }
 
-    private static void LanguageSwitchPostfix() {
+    private static void LanguageDoSwitchPostfix() {
+        PluginConfig.SelectedLanguage.Value = Language._currentLanguage;
+
         DialogueBoxUpdater.InitReverseEntrySheets();
 
         if (SceneManager.GetActiveScene().name == "Menu_Title") {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using TeamCherry.Localization;
@@ -11,8 +12,8 @@ public class DialogueBoxUpdater {
     private static LocalisedString? savedText;
     private static bool savedOverrideContinue;
     private static DialogueBox.DisplayOptions savedDisplayOptions;
-    private static Action savedOnDialogueEnd;
-    private static Action savedOnDialogueCancelled;
+    private static Action? savedOnDialogueEnd;
+    private static Action? savedOnDialogueCancelled;
 
     public static void UpdateText() {
         var dialogueBox = DialogueBox._instance;
@@ -59,5 +60,18 @@ public class DialogueBoxUpdater {
                 break;
             }
         }
+    }
+    
+    
+    [HarmonyPatch(typeof(DialogueBox), nameof(DialogueBox.CloseAndEnd))]
+    [HarmonyPostfix]
+    private static IEnumerator DialogueBoxCloseAndEnd(IEnumerator __result) {
+        while (__result.MoveNext()) {
+            yield return __result.Current;
+        }
+
+        savedText = null;
+        savedOnDialogueEnd = null;
+        savedOnDialogueCancelled = null;
     }
 }

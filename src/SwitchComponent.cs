@@ -14,7 +14,6 @@ public class SwitchComponent : MonoBehaviour {
     private void Start() {
         availableLanguages = Language.GetLanguages()
             .Select(LocalizationSettings.GetLanguageEnum)
-            .Distinct()
             .ToList();
     }
 

@@ -33,7 +33,7 @@ public class DebugComponent : MonoBehaviour {
     }
     
     private static void LocalisedStringToString(bool allowBlankText, string __result) {
-        Plugin.Log.LogWarning($"LocalisedString.ToString({allowBlankText}) = {__result}");
-        Plugin.Log.LogInfo(new StackTrace());
+        // Plugin.Log.LogWarning($"LocalisedString.ToString({allowBlankText}) = {__result}");
+        // Plugin.Log.LogInfo(new StackTrace());
     }
 }

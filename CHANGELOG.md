@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1
+fix: Switching to a certain language results in an error
+
 ## 1.2.0
 * feat: Support by switching language via the [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager)
 * fix: Area/NPC title does not change in real time

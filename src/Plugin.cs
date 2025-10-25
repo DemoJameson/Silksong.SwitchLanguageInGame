@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using BepInEx;
 using BepInEx.Logging;
+using GlobalEnums;
 using HarmonyLib;
 using TeamCherry.Localization;
 using UnityEngine;
@@ -70,30 +71,40 @@ public partial class Plugin : BaseUnityPlugin {
             return;
         }
 
-        UpdateMeshProText();
-        UpdateChangeFontByLanguage();
+        UpdateSetting();
+        UpdateLanguageCpomponents();
         DialogueBoxUpdater.UpdateText();
     }
 
-    private static void UpdateMeshProText() {
-        var texts = Resources.FindObjectsOfTypeAll<SetTextMeshProGameText>();
-        if (texts == null) {
-            return;
-        }
-
-        foreach (var text in texts) {
-            text.UpdateText();
+    private static void UpdateSetting() {
+        var gameManager = GameManager._instance;
+        if (gameManager) {
+            gameManager.gameSettings.gameLanguage = (SupportedLanguages)Language._currentLanguage;
+            gameManager.RefreshLocalization();
+            UIManager.instance.languageSetting.UpdateText();
         }
     }
-    
-    private static void UpdateChangeFontByLanguage() {
-        var components = Resources.FindObjectsOfTypeAll<ChangeFontByLanguage>();
+
+    private static void UpdateLanguageCpomponents() {
+        UpdateComponents<SetTextMeshProGameText>(component => component.UpdateText());
+        UpdateComponents<ChangePositionByLanguage>(component => component.DoOffset());
+        UpdateComponents<ActivatePerLanguage>(component => component.UpdateLanguage());
+        UpdateComponents<ChangeByLanguageBase>(component => component.DoUpdate());
+        UpdateComponents<ChangeFontByLanguage>(component => {
+            if (component.defaultMaterial) {
+                component.SetFont();
+            }
+        });
+    }
+
+    private static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {
+        var components = Resources.FindObjectsOfTypeAll<T>();
         if (components == null) {
             return;
         }
 
         foreach (var component in components) {
-            component.SetFont();
+            action(component);
         }
     }
 }

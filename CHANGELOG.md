@@ -2,6 +2,7 @@
 
 ## 1.2.0
 * feat: Support by switching language via the [BepInEx.ConfigurationManager](https://github.com/BepInEx/BepInEx.ConfigurationManager)
+* fix: Area/NPC title does not change in real time
 
 ## 1.1.0
 * feat: Add shortcut keys to switch languages, requires manual configuration first

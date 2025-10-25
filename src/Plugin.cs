@@ -64,13 +64,14 @@ public partial class Plugin : BaseUnityPlugin {
     private static void LanguageDoSwitchPostfix() {
         PluginConfig.SelectedLanguage.Value = Language._currentLanguage;
 
-        DialogueBoxUpdater.InitReverseEntrySheets();
+        DialogueBoxUpdater.AddReversedEntrySheets();
 
         if (SceneManager.GetActiveScene().name == "Menu_Title") {
             return;
         }
 
         UpdateMeshProText();
+        UpdateChangeFontByLanguage();
         DialogueBoxUpdater.UpdateText();
     }
 
@@ -82,6 +83,17 @@ public partial class Plugin : BaseUnityPlugin {
 
         foreach (var text in texts) {
             text.UpdateText();
+        }
+    }
+    
+    private static void UpdateChangeFontByLanguage() {
+        var components = Resources.FindObjectsOfTypeAll<ChangeFontByLanguage>();
+        if (components == null) {
+            return;
+        }
+
+        foreach (var component in components) {
+            component.SetFont();
         }
     }
 }

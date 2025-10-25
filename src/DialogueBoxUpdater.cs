@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using BepInEx.Logging;
 using HarmonyLib;
 using TeamCherry.Localization;
+using TMProOld;
 
 namespace Silksong.SwitchLanguageInGame;
 
 [HarmonyPatch]
 public class DialogueBoxUpdater {
-    private static readonly Dictionary<string, Dictionary<string, string>> reverseEntrySheets = new();
+    private static ManualLogSource Log => Plugin.Log;
+    private static readonly Dictionary<LanguageCode, Dictionary<string, Dictionary<string, string>>> reversedEntrySheets = new();
     private static LocalisedString? savedText;
     private static bool savedOverrideContinue;
     private static DialogueBox.DisplayOptions savedDisplayOptions;
@@ -16,6 +19,8 @@ public class DialogueBoxUpdater {
     private static Action? savedOnDialogueCancelled;
 
     public static void UpdateText() {
+        UpdateAreaTitle();
+        
         var dialogueBox = DialogueBox._instance;
         if (!dialogueBox || !dialogueBox.isDialogueRunning) {
             return;
@@ -27,16 +32,37 @@ public class DialogueBoxUpdater {
 
         DialogueBox.StartConversation(savedText.Value.ToString(false),  dialogueBox.instigator, savedOverrideContinue, savedDisplayOptions, savedOnDialogueEnd, savedOnDialogueCancelled);
     }
+
+    private static void UpdateAreaTitle() {
+        var areaTitle = AreaTitle.Instance;
+        if (!areaTitle) return;
+
+        var texts = areaTitle.gameObject.GetComponentsInChildren<TextMeshPro>();
+        if (texts == null) return;
+
+        foreach (var textMeshPro in texts) {
+            var localisedString = guessLocalisedString(textMeshPro.text, specifiedSheet: "Titles");
+            if (localisedString != null) {
+                textMeshPro.text = localisedString.Value.ToString();
+            }
+        }
+    }
     
-    public static void InitReverseEntrySheets() {
-        reverseEntrySheets.Clear();
+    public static void AddReversedEntrySheets() {
+        if (reversedEntrySheets.ContainsKey(Language._currentLanguage)) {
+            return;
+        }
+
+        Dictionary<string, Dictionary<string, string>> entrySheets = new();
+        reversedEntrySheets.Add(Language._currentLanguage, entrySheets);
+
         foreach (var entrySheet in Language._currentEntrySheets) {
             var sheetValue = entrySheet.Value;
             Dictionary<string, string> reverseValue = new();
             foreach (var pair in sheetValue) {
                 reverseValue[pair.Value] = pair.Key;
             }
-            reverseEntrySheets.Add(entrySheet.Key, reverseValue);
+            entrySheets.Add(entrySheet.Key, reverseValue);
         }
     }
 
@@ -50,15 +76,13 @@ public class DialogueBoxUpdater {
             return;
         }
 
-        foreach (var (sheetName, keys) in reverseEntrySheets) {
-            if (keys.TryGetValue(text, out var key)) {
-                savedText = new LocalisedString(sheetName, key);
-                savedOverrideContinue = overrideContinue;
-                savedDisplayOptions = displayOptions;
-                savedOnDialogueEnd = onDialogueEnd;
-                savedOnDialogueCancelled = onDialogueCancelled;
-                break;
-            }
+        var localisedString = guessLocalisedString(text, specifiedLanguage: Language._currentLanguage);
+        if (localisedString != null) {
+            savedText = localisedString.Value;
+            savedOverrideContinue = overrideContinue;
+            savedDisplayOptions = displayOptions;
+            savedOnDialogueEnd = onDialogueEnd;
+            savedOnDialogueCancelled = onDialogueCancelled;
         }
     }
     
@@ -73,5 +97,29 @@ public class DialogueBoxUpdater {
         savedText = null;
         savedOnDialogueEnd = null;
         savedOnDialogueCancelled = null;
+    }
+    
+    private static LocalisedString? guessLocalisedString(string? text, LanguageCode? specifiedLanguage = null, string? specifiedSheet = null) {
+        if (string.IsNullOrEmpty(text)) {
+            return null;
+        }
+
+        foreach (var (languageCode, entrySheets) in reversedEntrySheets) {
+            if (specifiedLanguage != null && languageCode != specifiedLanguage) {
+                continue;
+            }
+
+            foreach (var (sheetName, keys) in entrySheets) {
+                if (specifiedSheet != null && sheetName != specifiedSheet) {
+                    continue;
+                }
+
+                if (keys.TryGetValue(text, out var key)) {
+                    return new LocalisedString(sheetName, key);
+                }
+            }
+        }
+
+        return null;
     }
 }

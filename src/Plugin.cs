@@ -49,19 +49,18 @@ public partial class Plugin : BaseUnityPlugin {
         HarmonyInstance?.UnpatchSelf();
     }
 
-    [HarmonyPatch(typeof(Selectable), nameof(Selectable.interactable), MethodType.Setter)]
-    [HarmonyPrefix]
-    private static void SelectableSetInteractable(Selectable __instance, ref bool value) {
-        if (PluginConfig.Enabled.Value && !value && UIManager._instance && __instance == UIManager._instance.languageSetting) {
-            var description = __instance.gameObject.transform.Find("Description");
-            if (description) {
-                var text = description.GetComponent<Text>();
-                if (text) {
-                    text.enabled = false;
-                }
-            }
+    [HarmonyPatch(typeof(GameMenuOptions), nameof(GameMenuOptions.ConfigureNavigation))]
+    [HarmonyPostfix]
+    private static void GameMenuOptionsConfigureNavigation(GameMenuOptions __instance) {
+        if (PluginConfig.Enabled.Value && GameManager.instance.GameState != GameState.MAIN_MENU) {
+            var languageOption = __instance.languageOption;
+            languageOption.interactable = true;
+            languageOption.transform.parent.gameObject.SetActive(value: true);
+            __instance.languageOptionDescription.SetActive(value: false);
+            __instance.gameOptionsMenuScreen.defaultHighlight = languageOption;
 
-            value = true;
+            if (languageOption is MenuLanguageSetting setting)
+                setting.UpdateAlpha();
         }
     }
 

@@ -4,7 +4,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using TeamCherry.Localization;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Silksong.SwitchLanguageInGame;
 
@@ -18,7 +17,6 @@ public static class PluginConfig {
         var pluginConfig = plugin.Config;
 
         Enabled = pluginConfig.Bind("General", "Switch Language in Game", true, new ConfigDescription("Support language switching in the game"));
-        Enabled.SettingChanged += OnEnabledSettingChanged;
 
         PrevLanguageKey = pluginConfig.Bind("General", "Switch to Previous Language", new KeyboardShortcut(KeyCode.None),
             new ConfigDescription("Key for switching to previous language"));
@@ -31,18 +29,6 @@ public static class PluginConfig {
             new ConfigDescription("Switch languages in the available languages", new AcceptableValueEnum<LanguageCode>(languageCodes)));
         SelectedLanguage.Value = Language._currentLanguage;
         SelectedLanguage.SettingChanged += OnSelectedLanguageSettingChanged;
-    }
-
-    private static void OnEnabledSettingChanged(object sender, EventArgs eventArgs) {
-        if (Enabled.Value || !UIManager._instance) return;
-
-        var description = UIManager._instance.gameOptionsMenuScreen.transform.Find("Content/LanguageSetting/LanguageOption/Description");
-        if (!description) return;
-
-        var text = description.GetComponent<Text>();
-        if (text) {
-            text.enabled = true;
-        }
     }
 
     private static void OnSelectedLanguageSettingChanged(object sender, EventArgs eventArgs) {

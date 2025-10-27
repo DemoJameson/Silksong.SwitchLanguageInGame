@@ -75,17 +75,9 @@ public partial class Plugin : BaseUnityPlugin {
         UpdateSetting();
         UpdateComponents();
         UpdatePanel();
-        UpdateQuest();
+        UpdateQuestBoard();
+        UpdateQuestShop();
         OnLanguageSwitched?.Invoke(Language._currentLanguage);
-    }
-
-    private static void UpdatePanel() {
-        var gameManager = GameManager._instance;
-        if (!gameManager) return;
-
-        var mapManager = gameManager.gameMap.mapManager;
-        mapManager.paneList.currentPaneText.text = mapManager.pane.DisplayName;
-        mapManager.UpdateKeyPromptState(false);
     }
 
     private static void UpdateSetting() {
@@ -97,7 +89,32 @@ public partial class Plugin : BaseUnityPlugin {
         UIManager.instance.languageSetting.UpdateText();
     }
 
-    private static void UpdateQuest() {
+    private static void UpdateComponents() {
+        UpdateComponents<SetTextMeshProGameText>(component => component.UpdateText());
+        UpdateComponents<ActivatePerLanguage>(component => component.UpdateLanguage());
+        UpdateComponents<ChangeByLanguageBase>(component => component.DoUpdate());
+        UpdateComponents<InventoryItemManager>(component => {
+            if (component.CurrentSelected) {
+                component.SetDisplay(component.CurrentSelected);
+            }
+        });
+        UpdateComponents<ChangeFontByLanguage>(component => {
+            if (component.defaultMaterial) {
+                component.SetFont();
+            }
+        });
+    }
+
+    private static void UpdatePanel() {
+        var gameManager = GameManager._instance;
+        if (!gameManager) return;
+
+        var mapManager = gameManager.gameMap.mapManager;
+        mapManager.paneList.currentPaneText.text = mapManager.pane.DisplayName;
+        mapManager.UpdateKeyPromptState(false);
+    }
+
+    private static void UpdateQuestBoard() {
         UpdateComponents<QuestItemBoard>(component => {
             if (!component.itemList) return;
 
@@ -129,20 +146,23 @@ public partial class Plugin : BaseUnityPlugin {
         });
     }
 
-    private static void UpdateComponents() {
-        UpdateComponents<SetTextMeshProGameText>(component => component.UpdateText());
-        UpdateComponents<ActivatePerLanguage>(component => component.UpdateLanguage());
-        UpdateComponents<ChangeByLanguageBase>(component => component.DoUpdate());
-        UpdateComponents<InventoryItemManager>(component => {
-            if (component.CurrentSelected) {
-                component.SetDisplay(component.CurrentSelected);
+    private static void UpdateQuestShop() {
+        var shopMenu = SimpleShopMenuOwner._spawnedMenu;
+        if (!shopMenu) return;
+
+        var owner = shopMenu.owner;
+        if (owner) {
+            if (shopMenu.titleText) shopMenu.titleText.text = owner.ShopTitle;
+            if (shopMenu.purchaseText) shopMenu.purchaseText.text = owner.PurchaseText;
+        }
+
+        for (var i = 0; i < shopMenu.activeItemCount; i++) {
+            var display = shopMenu.spawnedItemDisplays[i];
+            var item = shopMenu.shopItems[i];
+            if (display.titleText) {
+                display.titleText.text = item.GetDisplayName();
             }
-        });
-        UpdateComponents<ChangeFontByLanguage>(component => {
-            if (component.defaultMaterial) {
-                component.SetFont();
-            }
-        });
+        }
     }
 
     public static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {

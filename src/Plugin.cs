@@ -12,7 +12,7 @@ using UnityEngine.UI;
 namespace Silksong.SwitchLanguageInGame;
 
 [HarmonyPatch]
-[BepInAutoPlugin(id: "com.demojameson.silksong.switchlanguageingame", name: "Switch Language in Game")]
+[BepInAutoPlugin(id: "com.demojameson.switchlanguageingame", name: "Switch Language in Game")]
 public partial class Plugin : BaseUnityPlugin {
     public static ManualLogSource Log = null!;
     public static Harmony? HarmonyInstance { get; private set; }

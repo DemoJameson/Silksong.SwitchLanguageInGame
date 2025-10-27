@@ -7,12 +7,10 @@ A Hollow Knight: Silksong mod for supporting language switching in the game.
 * Support language switching via shortcut key. (requires manual configuration first)
 
 ## Configuration
-Recommend using the [BepInEx.ConfigurationManager](https://thunderstore.io/c/hollow-knight-silksong/p/jakobhellermann/BepInExConfigurationManager/) for easy in-game customization of settings. If you have it installed (press F1 in-game to open the menu), navigate to the "Make Float Great Again" section to adjust options directly—no file editing required.
+Recommend using the [BepInEx.ConfigurationManager](https://thunderstore.io/c/hollow-knight-silksong/p/jakobhellermann/BepInExConfigurationManager/) for easy in-game customization of settings.
+If you have it installed (press F1 in-game to open the menu), navigate to the "Switch Language in Game" section to adjust options directly—no file editing required.
 
 Alternatively, edit the configuration file located at `BepInEx\config\com.demojameson.switchlanguageingame.cfg`
-
-## Source
-GitHub: [https://github.com/DemoJameson/Silksong.SwitchLanguageInGame](https://github.com/DemoJameson/Silksong.SwitchLanguageInGame)
 
 ## To install
 
@@ -32,3 +30,6 @@ After unzipping, run the game once, so that the BepInEx folder structure generat
 
 Then pull this DLL, or folder including the dll in to
 `Hollow Knight Silksong\BepInEx\plugins`
+
+## Source
+GitHub: [https://github.com/DemoJameson/Silksong.SwitchLanguageInGame](https://github.com/DemoJameson/Silksong.SwitchLanguageInGame)

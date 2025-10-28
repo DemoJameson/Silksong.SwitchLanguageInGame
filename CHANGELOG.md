@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0
+* feat: Add separate shortcut keys for each language
+
 ## 1.2.2
 * fix: Some text does not update in real time
 

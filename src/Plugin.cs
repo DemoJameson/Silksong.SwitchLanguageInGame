@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Logging;
 using GlobalEnums;
 using HarmonyLib;
+using Silksong.SwitchLanguageInGame.config;
 using TeamCherry.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,7 +27,7 @@ public partial class Plugin : BaseUnityPlugin {
             Logger.LogError(e);
         }
 
-        gameObject.AddComponent<SwitchComponent>();
+        gameObject.AddComponent<ShortcutComponent>();
         gameObject.AddComponent<PlayMakerFSMComponent>();
         gameObject.AddComponent<DialogueBoxComponent>();
         gameObject.AddComponent<PromptMarkerComponent>();
@@ -65,7 +66,7 @@ public partial class Plugin : BaseUnityPlugin {
     }
 
     private static void LanguageDoSwitchPostfix() {
-        PluginConfig.SelectedLanguage.Value = Language._currentLanguage;
+        PluginConfig.SelectedLanguage.Value = Language._currentLanguage.ToWord();
         LanguageUtils.AddReversedEntrySheets();
 
         if (SceneManager.GetActiveScene().name == "Menu_Title") {

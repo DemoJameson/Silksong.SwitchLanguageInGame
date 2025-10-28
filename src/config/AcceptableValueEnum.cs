@@ -2,7 +2,7 @@
 using System.Linq;
 using BepInEx.Configuration;
 
-namespace Silksong.SwitchLanguageInGame;
+namespace Silksong.SwitchLanguageInGame.config;
 
 public class AcceptableValueEnum<T> : AcceptableValueBase where T : Enum {
     public virtual T[] AcceptableValues { get; }

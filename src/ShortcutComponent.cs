@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using Silksong.SwitchLanguageInGame.config;
 using TeamCherry.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,8 +9,8 @@ using UnityEngine.SceneManagement;
 namespace Silksong.SwitchLanguageInGame;
 
 [HarmonyPatch]
-public class SwitchComponent : MonoBehaviour {
-    private List<LanguageCode> availableLanguages;
+public class ShortcutComponent : MonoBehaviour {
+    private List<LanguageCode> availableLanguages = [];
 
     private void Start() {
         availableLanguages = Language.GetLanguages()
@@ -25,13 +26,18 @@ public class SwitchComponent : MonoBehaviour {
         if (PluginConfig.PrevLanguageKey.IsDown()) {
             var index = availableLanguages.IndexOf(Language._currentLanguage);
             var prevIndex = (index - 1 + availableLanguages.Count) % availableLanguages.Count;
-            Language.SwitchLanguage(availableLanguages[prevIndex]);
-            UIManager._instance.uiAudioPlayer.PlaySubmit();
+            LanguageUtils.Switch(availableLanguages[prevIndex]);
         } else if (PluginConfig.NextLanguageKey.IsDown()) {
             var indexOf = availableLanguages.IndexOf(Language._currentLanguage);
             var nextIndex = (indexOf + 1) % availableLanguages.Count;
-            Language.SwitchLanguage(availableLanguages[nextIndex]);
-            UIManager._instance.uiAudioPlayer.PlaySubmit();
+            LanguageUtils.Switch(availableLanguages[nextIndex]);
+        } else {
+            foreach (var (code, configEntry) in PluginConfig.LanguagesKey) {
+                if (configEntry.IsDown()) {
+                    LanguageUtils.Switch(code);
+                    break;
+                }
+            }
         }
     }
 }

@@ -69,11 +69,8 @@ public partial class Plugin : BaseUnityPlugin {
         PluginConfig.SelectedLanguage.Value = Language._currentLanguage.ToWord();
         LanguageUtils.AddReversedEntrySheets();
 
-        if (SceneManager.GetActiveScene().name == "Menu_Title") {
-            return;
-        }
-
         UpdateSetting();
+        UpdateSlotButton();
         UpdateComponents();
         UpdatePanel();
         UpdateQuestBoard();
@@ -89,6 +86,18 @@ public partial class Plugin : BaseUnityPlugin {
         gameManager.gameSettings.gameLanguage = (SupportedLanguages)Language._currentLanguage;
         gameManager.RefreshLocalization();
         UIManager.instance.languageSetting.UpdateText();
+    }
+
+    private static void UpdateSlotButton() {
+        UpdateComponents<SaveSlotButton>(button => {
+            if (!button.locationText) return;
+            var text = button.locationText.text;
+            if (text.IsNullOrWhiteSpace()) return;
+            text = text.Replace(Environment.NewLine, "<br>");
+            if (LanguageUtils.guessLocalisedString(text, "Map Zones") is { } localised) {
+                button.locationText.text = localised.ToString().Replace("<br>", Environment.NewLine);
+            }
+        });
     }
 
     private static void UpdateComponents() {
@@ -109,7 +118,7 @@ public partial class Plugin : BaseUnityPlugin {
 
     private static void UpdatePanel() {
         var gameManager = GameManager._instance;
-        if (!gameManager) return;
+        if (!gameManager || !gameManager.gameMap) return;
 
         var mapManager = gameManager.gameMap.mapManager;
         mapManager.paneList.currentPaneText.text = mapManager.pane.DisplayName;

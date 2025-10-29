@@ -61,10 +61,10 @@ public static class LanguageUtils {
     }
     
     public static void Switch(LanguageCode language) {
-        if (language == Language.CurrentLanguage()) return;
-
-        Language.SwitchLanguage(language);
         UIManager._instance.uiAudioPlayer.PlaySubmit();
+        if (language != Language.CurrentLanguage()) {
+            Language.SwitchLanguage(language);
+        }
     }
 
     public static string ToWord(this LanguageCode languageCode) {

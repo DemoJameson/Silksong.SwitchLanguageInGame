@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.0
+* feat: Allow shortcut key works at title menu
+
 ## 1.3.1
 * fix: Needolin/Memory text does not update in real time
 

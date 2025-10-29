@@ -19,10 +19,6 @@ public class ShortcutComponent : MonoBehaviour {
     }
 
     private void Update() {
-        if (SceneManager.GetActiveScene().name == "Menu_Title") {
-            return;
-        }
-
         if (PluginConfig.PrevLanguageKey.IsDown()) {
             var index = availableLanguages.IndexOf(Language._currentLanguage);
             var prevIndex = (index - 1 + availableLanguages.Count) % availableLanguages.Count;

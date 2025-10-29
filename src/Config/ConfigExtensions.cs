@@ -2,9 +2,9 @@
 using BepInEx;
 using BepInEx.Configuration;
 
-namespace Silksong.SwitchLanguageInGame.config;
+namespace Silksong.SwitchLanguageInGame.Config;
 
-public static class ConfigEntryExtensions {
+public static class ConfigExtensions {
     public static bool IsDown(this ConfigEntry<KeyboardShortcut> configEntry) {
         if (!configEntry.Value.Modifiers.Any()) {
             return UnityInput.Current.GetKeyDown(configEntry.Value.MainKey);

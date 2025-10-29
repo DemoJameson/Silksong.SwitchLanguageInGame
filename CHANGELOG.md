@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.1
+* fix: Needolin/Memory text does not update in real time
+
 ## 1.3.0
 * feat: Add separate shortcut keys for each language
 

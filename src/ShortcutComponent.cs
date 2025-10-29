@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Silksong.SwitchLanguageInGame.config;
+using Silksong.SwitchLanguageInGame.Config;
 using TeamCherry.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;

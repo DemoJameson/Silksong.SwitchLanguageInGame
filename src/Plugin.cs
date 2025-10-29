@@ -4,7 +4,7 @@ using BepInEx;
 using BepInEx.Logging;
 using GlobalEnums;
 using HarmonyLib;
-using Silksong.SwitchLanguageInGame.config;
+using Silksong.SwitchLanguageInGame.Config;
 using TeamCherry.Localization;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -78,6 +78,7 @@ public partial class Plugin : BaseUnityPlugin {
         UpdatePanel();
         UpdateQuestBoard();
         UpdateQuestShop();
+        UpdateMsgBox();
         OnLanguageSwitched?.Invoke(Language._currentLanguage);
     }
 
@@ -164,6 +165,30 @@ public partial class Plugin : BaseUnityPlugin {
                 display.titleText.text = item.GetDisplayName();
             }
         }
+    }
+
+    private static void UpdateMsgBox() {
+        UpdateComponents<NeedolinMsgBox>(component => {
+            if (component.primaryText && LanguageUtils.guessLocalisedString(component.primaryText.text, "Song", "Lore") is { } text) {
+                component.primaryText.text = text;
+            }
+
+            if (component.secondaryText && LanguageUtils.guessLocalisedString(component.secondaryText.text, "Song", "Lore") is { } text2) {
+                component.secondaryText.text = text2;
+            }
+        });
+
+        UpdateComponents<MemoryMsgBox>(component => {
+            if (component.textDisplays == null) return;
+
+            foreach (var display in component.textDisplays) {
+                if (!display) continue;
+
+                if (LanguageUtils.guessLocalisedString(display.text, specifiedSheet: "Lore") is { } text) {
+                    display.text = text;
+                }
+            }
+        });
     }
 
     public static void UpdateComponents<T>(Action<T> action) where T : MonoBehaviour {

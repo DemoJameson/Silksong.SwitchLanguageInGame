@@ -19,7 +19,7 @@ public class DebugComponent : MonoBehaviour {
 
         original = AccessTools.Method(typeof(LocalisedString), nameof(LocalisedString.ToString), [typeof(bool)]);
         postfix = new HarmonyMethod(typeof(DebugComponent), nameof(LocalisedStringToString));
-        Plugin.HarmonyInstance?.Patch(original, postfix: postfix);
+        // Plugin.HarmonyInstance?.Patch(original, postfix: postfix);
     }
 
     private static void LanguageGet(string key, string sheetTitle, string __result) {
@@ -33,7 +33,7 @@ public class DebugComponent : MonoBehaviour {
     }
 
     private static void LocalisedStringToString(bool allowBlankText, string __result) {
-        // Plugin.Log.LogWarning($"LocalisedString.ToString({allowBlankText}) = {__result}");
-        // Plugin.Log.LogInfo(new StackTrace());
+        Plugin.Log.LogWarning($"LocalisedString.ToString({allowBlankText}) = {__result}");
+        Plugin.Log.LogInfo(new StackTrace());
     }
 }

@@ -6,7 +6,7 @@ using BepInEx.Configuration;
 using TeamCherry.Localization;
 using UnityEngine;
 
-namespace Silksong.SwitchLanguageInGame.config;
+namespace Silksong.SwitchLanguageInGame.Config;
 
 public static class PluginConfig {
     public static ConfigEntry<bool> Enabled = null!;
@@ -28,13 +28,13 @@ public static class PluginConfig {
         SelectedLanguage.Value = Language._currentLanguage.ToWord();
         SelectedLanguage.SettingChanged += OnSelectedLanguageSettingChanged;
 
-        PrevLanguageKey = pluginConfig.BindEx("General", "Switch to Previous Language", "Key for switching to previous language", new KeyboardShortcut(KeyCode.None), --order);
-        NextLanguageKey = pluginConfig.BindEx("General", "Switch to Next Language", "Key for switching to next language", new KeyboardShortcut(KeyCode.None), --order);
+        PrevLanguageKey = pluginConfig.BindEx("Shortcut Key", "Switch to Previous Language", "Key for switching to previous language", new KeyboardShortcut(KeyCode.None), --order);
+        NextLanguageKey = pluginConfig.BindEx("Shortcut Key", "Switch to Next Language", "Key for switching to next language", new KeyboardShortcut(KeyCode.None), --order);
 
         foreach (var languageCode in Language.GetLanguages().Select(LocalizationSettings.GetLanguageEnum)) {
             LanguagesKey.Add(
                 languageCode,
-                pluginConfig.BindEx("General", $"Switch to {languageCode.ToWord()}", $"Key for switching to {languageCode.ToWord()}", new KeyboardShortcut(KeyCode.None), --order)
+                pluginConfig.BindEx("Shortcut Key", $"Switch to {languageCode.ToWord()}", $"Key for switching to {languageCode.ToWord()}", new KeyboardShortcut(KeyCode.None), --order)
             );
         }
     }

@@ -31,6 +31,16 @@ public static class LanguageUtils {
         return null;
     }
 
+    public static LocalisedString? guessLocalisedString(string? text, params string[] sheets) {
+        foreach (var sheet in sheets) {
+            if (guessLocalisedString(text, specifiedSheet: sheet) is { } localised) {
+                return localised;
+            }
+        }
+
+        return null;
+    }
+
     public static void AddReversedEntrySheets() {
         if (reversedEntrySheets.ContainsKey(Language._currentLanguage)) {
             return;

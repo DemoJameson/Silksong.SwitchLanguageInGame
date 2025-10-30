@@ -2,23 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
-using BepInEx.Logging;
 using HarmonyLib;
 using HutongGames.PlayMaker.Actions;
 using MonoMod.Utils;
-using TeamCherry.Localization;
-using UnityEngine;
 
-namespace Silksong.SwitchLanguageInGame;
+namespace Silksong.SwitchLanguageInGame.Components;
 
 [HarmonyPatch]
-public class PlayMakerFSMComponent : MonoBehaviour {
-    private static ManualLogSource Log => Plugin.Log;
+[PluginComponentPriority(int.MaxValue)]
+public class PlayMakerFSMComponent : PluginComponent {
     private static List<WeakReference<PlayMakerFSM>> playMakerFSMList = [];
     private static WeakReference<PlayMakerFSM>? itemListControl;
 
     private void Awake() {
-        Plugin.OnLanguageSwitched += _ => UpdateText();
+        SwitchComponent.AfterLanguageSwitched += _ => UpdateText();
         var dynData = new DynData<GameManager>(GameManager._instance);
         playMakerFSMList = dynData.Get<List<WeakReference<PlayMakerFSM>>?>(nameof(playMakerFSMList)) ?? [];
         itemListControl = dynData.Get<WeakReference<PlayMakerFSM>?>(nameof(itemListControl));

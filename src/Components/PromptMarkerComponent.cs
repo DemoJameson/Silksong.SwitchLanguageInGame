@@ -1,17 +1,14 @@
 ﻿using System.Runtime.CompilerServices;
-using BepInEx.Logging;
 using HarmonyLib;
-using UnityEngine;
 
-namespace Silksong.SwitchLanguageInGame;
+namespace Silksong.SwitchLanguageInGame.Components;
 
 [HarmonyPatch]
-public class PromptMarkerComponent : MonoBehaviour {
-    private static ManualLogSource Log => Plugin.Log;
+public class PromptMarkerComponent : PluginComponent {
     private static readonly ConditionalWeakTable<PromptMarker, string> labelNameTable = new();
 
     private void Awake() {
-        Plugin.OnLanguageSwitched += _ => UpdateText();
+        SwitchComponent.AfterLanguageSwitched += _ => UpdateText();
     }
 
     [HarmonyPatch(typeof(PromptMarker), nameof(PromptMarker.SetLabel))]
@@ -21,7 +18,7 @@ public class PromptMarkerComponent : MonoBehaviour {
     }
 
     private static void UpdateText() {
-        Plugin.UpdateComponents<PromptMarker>(component => {
+        UpdateComponents<PromptMarker>(component => {
             if (labelNameTable.TryGetValue(component, out var labelName)) {
                 component.SetLabel(labelName);
             }

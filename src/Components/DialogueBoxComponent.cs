@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections;
-using BepInEx.Logging;
 using HarmonyLib;
+using Silksong.SwitchLanguageInGame.Utils;
 using TeamCherry.Localization;
 using TMProOld;
-using UnityEngine;
 
-namespace Silksong.SwitchLanguageInGame;
+namespace Silksong.SwitchLanguageInGame.Components;
 
 [HarmonyPatch]
-public class DialogueBoxComponent : MonoBehaviour {
-    private static ManualLogSource Log => Plugin.Log;
+public class DialogueBoxComponent : PluginComponent {
     private static LocalisedString? savedText;
     private static bool savedOverrideContinue;
     private static DialogueBox.DisplayOptions savedDisplayOptions;
@@ -18,7 +16,7 @@ public class DialogueBoxComponent : MonoBehaviour {
     private static Action? savedOnDialogueCancelled;
 
     private void Awake() {
-        Plugin.OnLanguageSwitched += _ => UpdateText();
+        SwitchComponent.AfterLanguageSwitched += _ => UpdateText();
     }
 
     private static void UpdateText() {

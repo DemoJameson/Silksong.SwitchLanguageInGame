@@ -2,7 +2,7 @@
 using BepInEx;
 using BepInEx.Configuration;
 
-namespace Silksong.SwitchLanguageInGame.Config;
+namespace Silksong.SwitchLanguageInGame.Extensions;
 
 public static class ConfigExtensions {
     public static bool IsDown(this ConfigEntry<KeyboardShortcut> configEntry) {

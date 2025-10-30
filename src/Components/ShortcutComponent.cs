@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using Silksong.SwitchLanguageInGame.Config;
+using Silksong.SwitchLanguageInGame.Configs;
+using Silksong.SwitchLanguageInGame.Extensions;
+using Silksong.SwitchLanguageInGame.Utils;
 using TeamCherry.Localization;
-using UnityEngine;
-using UnityEngine.SceneManagement;
 
-namespace Silksong.SwitchLanguageInGame;
+namespace Silksong.SwitchLanguageInGame.Components;
 
 [HarmonyPatch]
-public class ShortcutComponent : MonoBehaviour {
+public class ShortcutComponent : PluginComponent {
     private List<LanguageCode> availableLanguages = [];
 
     private void Start() {
